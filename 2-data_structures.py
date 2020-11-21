@@ -25,7 +25,21 @@ A. Abstract Data Type (ADT) : is theoretical concepts of data structure from use
             b. Queue (FIFO)
         with different rules applied on behaviors of naive lists
     
-    3. Tree:
+    3. Tree (abstract model of hierarchical data structure):
+        traversal:
+            1. post order
+            2. pre order
+            3. in order (for binary tree only)
+            4. eular traversal (for binary tree only)
+
+            a. get_root()
+            b. get_leavesNodes()   external nodes compared to internal nodes
+            c. get_ancestors(node)
+            d. get_descenants(node)
+            e. get_siblings(node)
+            f. get_depth(node)
+            g. get_height()
+            h. get_level(integer)  return all nodes in level integer
 
 B. Data Structure : concrete representation from implementer's view
    1. Array-based Lists --> see "array class"
@@ -274,6 +288,14 @@ class linked_list():
                 to_return.append(start.data)
         return to_return
                 
+class tree_node():
+    def __init__(self,data = None):
+        self.parent = None
+        self.data = data
+        self.chind_nodes = []
+class tree():
+    def __init__(self):
+        pass
 
 # test...:
 
@@ -287,17 +309,6 @@ if not list_test_2:
     print("list_test_2 empty")
 '''
 # ------------ t2
-
-list1_header = LL_node(if_head=True)
-list1_node1 = LL_node(if_head = False,data = 1)
-list1_node2 = LL_node(data = 2) 
-list1_node3 = LL_node(data = 3)
-list1_node4 = LL_node(data = 4)
-
-list1 = linked_list(nodes = [list1_header,list1_node1])
-
-list1.insertBefore(list1_node1,list1_node2)
-print(list1.get_nodes_data())
 
 #print(list1.after(list1_node4).data,"hree")
 
