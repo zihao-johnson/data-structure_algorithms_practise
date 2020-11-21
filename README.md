@@ -1,2 +1,2 @@
-# usyd_comp9007
+# data structure-algorithms practise
 code implementation of units
