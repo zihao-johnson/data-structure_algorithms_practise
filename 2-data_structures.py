@@ -289,17 +289,148 @@ class linked_list():
         return to_return
                 
 class tree_node():
-    def __init__(self,data = None):
-        self.parent = None
-        self.data = data
-        self.chind_nodes = []
+    '''
+        thought to use undrescores to mongle elements to let variables as like "private",
+        but it can be still accessed
+    '''
+    def __init__(self,data = None, if_root = False):
+        self.__data = data
+        self.__child_nodes = []
+        self.__if_root = if_root
+        if not self.__if_root:
+            self.__parent = None
+        
+    def get_data(self):
+            return self.__data
+    def get_childs(self):
+            return self.__child_nodes
+    def add_child(self,node):
+            self.__child_nodes.append(node)
+    def del_child(self,node):
+            try:
+                self.__child_nodes.remove(node)
+            except:print("Node being deleted is not child of the current node !")
+    def set_parent(self,node):
+            if self.__if_root:
+                print("Warning, adding parent to current root node, it and its descendants will be a descendants tree the parent")
+                self.__parent = node
+                self.__if_root = False
+            else:
+                self.__parent = node
+    def get_parent(self):
+            if self.__if_root:
+                print("Root node has not parent !")
+            elif self.__parent==None:
+                print("Node has not been assigned with parent yet !")
+            else:
+                return self.__parent
+            
 class tree():
-    def __init__(self):
-        pass
+    def __init__(self, if_subtree = False, if_binary_tree =  False):
+        self.__root = tree_node(if_root=True)
+        self.__tree_nodes = []
+        self.__if_subtree = if_subtree
+        self.__if_binary_tree = if_binary_tree
+        # as the tree stucture is not simple as lists that can be easily linked when initiation
+        # the relations between them has to be added manually
+    
+    def root(self):
+        return self.__root
+    
+    def get_all_nodes(self):
+        return [self.__root] + self.__tree_nodes 
+    
+    def add_node(self,node,parent):
+        # add node in the tree as child of parent:
+        if node == parent:
+            print("cannot add a node as the cild of itself !")
+        try:
+            if parent != self.__root:
+                self.__tree_nodes.index(parent)     
+            node.set_parent(parent)
+            parent.add_child(node)
+            self.__tree_nodes.append(node)
+        except:print("New node adding failed, parent node does not exist in the tree !")
+    def del_node(self,node):
+        try:
+            self.__tree_nodes.remove(node)
+            node.get_parent().del_child(node)
+            node.set_parent(None)
+            # get and del all child nodes of the relevant node
+            nodes = self.__pre_order(node)
+            for node in nodes:
+                try:
+                    self.__tree_nodes.remove(node)
+                except: pass 
+        except:
+            print("node is not in the tree")
+    # Traversal methods:
+    
+    def __pre_order(self, node = None, action_func = None, args = []):
+        if node ==None:
+            node = self.__root
+        # restructure action functions:
+        temper_args = args
+        for i,a in enumerate(args):
+            if args == "infunction_node":
+                temper_args[i] = node
+        
+        if action_func !=None:        
+            action_func(temper_args)
+        nodes_buffer = [node]
+        childs = node.get_childs()
+        for c in childs:
+            nodes_buffer += self.__pre_order(c,action_func,args)
+            if action_func !=None:    
+                action_func(temper_args)
+        return nodes_buffer
+    
+    def __post_order(self, node=None, action_func = None):
+        if node ==None:
+            node = self.__root
+        nodes_buffer = []
+        childs = node.get_childs()
+        for c in childs:
+            nodes_buffer += self.__post_order(c)
+        nodes_buffer += [node]
 
+        return nodes_buffer
+
+    def __in_order_main(self,node = None,action_func = None):
+        if node ==None:
+            node = self.__root
+        if self.__if_binary_tree:
+            nodes = self.__in_order(node,action_func)
+            return nodes
+        else:
+            print("Sorry, In-order Traversal cannot be used in non-bbinary tree !")
+    def __in_order(self, node=None, action_func = None):
+        nodes_buffer = []
+
+        '''
+            first element of the childs of the node will be the left, and second is right by default.
+        '''
+        childs = node.get_childs()
+        nodes_buffer = []
+        if len(childs)==0:
+            nodes_buffer +=[node]
+        else:
+            nodes_buffer += self.__in_order(childs[0])
+            nodes_buffer +=[node]
+            if len(childs)==2:
+                nodes_buffer += self.__in_order(childs[1])
+        return nodes_buffer
+
+    # Eular Traversal:
+    # currently print nodes data along traversal path on the console 
+    def eular_traversal(self, node, travel_method = None):
+        travel_method(node,self.print_node_data,["infunction_node"])
+    def print_node_data(self,node):
+        print(node[0].get_data())
+        
 # test...:
 
-# ------------ t1
+# ------------ t1:
 '''
 list_test_1 = []
 if not list_test_1:
@@ -308,7 +439,53 @@ list_test_2 = [[],[]]
 if not list_test_2:
     print("list_test_2 empty")
 '''
-# ------------ t2
+# ------------ t2:
+'''
+class test():
+    def __init__(self):
+        pass
+    def __data(self):
+        return 1
+    def inner_get(self):
+        return self.__data()
 
-#print(list1.after(list1_node4).data,"hree")
+test = test()
+print(test._test__data())
+print(test.inner_get())
+print(test.__data())
+'''
+# ------------ t3:
+"""def func1():
+    print("1")
 
+def func2():
+    print("2")
+
+def func_print(x):
+    print("value of x: ",x)
+
+def main_func(funcs = None, args = ()):
+    for i in range(0,3):
+        funcs(i)
+x = "this is perfect"
+main_func(funcs=func_print,args = (x))"""
+
+test = tree(if_binary_tree = True)
+test_node_1 = tree_node(data = 1)
+test_node_2 = tree_node(data = 2)
+test_node_3 = tree_node(data = 3)
+test.add_node(test_node_1,test.root())
+test.add_node(test_node_2,test.root())
+test.add_node(test_node_3,test_node_2)
+x = test.get_all_nodes()
+print(x)
+x = test._tree__pre_order()
+print(x)
+x = test._tree__post_order()
+print(x)
+x = test._tree__in_order_main()
+print(x)
+test.del_node(test_node_2)
+x= test.get_all_nodes()
+print(x)
+# did not finished, add a node to its child
