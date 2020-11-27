@@ -344,13 +344,18 @@ class tree():
         # add node in the tree as child of parent:
         if node == parent:
             print("cannot add a node as the cild of itself !")
-        try:
-            if parent != self.__root:
-                self.__tree_nodes.index(parent)     
-            node.set_parent(parent)
-            parent.add_child(node)
-            self.__tree_nodes.append(node)
-        except:print("New node adding failed, parent node does not exist in the tree !")
+        else:
+            its_descandents = self.__pre_order(node = node)
+            try:
+                its_descandents.index(node)
+                try:
+                    if parent != self.__root:
+                        self.__tree_nodes.index(parent)     
+                    node.set_parent(parent)
+                    parent.add_child(node)
+                    self.__tree_nodes.append(node)
+                except:print("New node adding failed, parent node does not exist in the tree !")
+            except:print("Cannot add a node as the child of its current descandents node !")
     def del_node(self,node):
         try:
             self.__tree_nodes.remove(node)
@@ -385,8 +390,8 @@ class tree():
                 action_func(temper_args)
         return nodes_buffer
     
-    def __post_order(self, node=None, action_func = None):
-        if node ==None:
+    def __post_order(self, node = None, action_func = None):
+        if node == None:
             node = self.__root
         nodes_buffer = []
         childs = node.get_childs()
@@ -403,7 +408,7 @@ class tree():
             nodes = self.__in_order(node,action_func)
             return nodes
         else:
-            print("Sorry, In-order Traversal cannot be used in non-bbinary tree !")
+            print("Sorry, In-order Traversal cannot be used in non-binary tree !")
     def __in_order(self, node=None, action_func = None):
         nodes_buffer = []
 
